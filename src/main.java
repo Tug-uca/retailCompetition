@@ -22,7 +22,7 @@ public class main {
 		// add
 		inputPara input = new inputPara("para.csv");
 		double[][] paraSet = input.getPara();
-		double[][] output = new double[paraSet.length * paraSet.length][4 * 2 + 7];
+		double[][] output = new double[paraSet.length * paraSet.length][4 * 2 + 7+ 1];
 		outputCSV outputCSV = new outputCSV();
 
 		custList = new customer[custNum];
@@ -47,6 +47,7 @@ public class main {
 				int[][] action = new int[simulationNum / comBehaveSpan][comNum];
 
 				int[] CASE = new int[7];
+				int deadCom=-1;
 				for (int i = 0; i < 7; i++) {
 					CASE[i] = 0;
 				}
@@ -263,7 +264,7 @@ public class main {
 						draw++;
 					}
 
-					int deadCom = -1;
+					deadCom = -1;
 					int deadTiming = -1;
 					int finished = -1;
 					int winCom = -1;
@@ -317,6 +318,7 @@ public class main {
 							}
 						}
 
+						//ケースの判定
 						if (deadTiming < 100) {
 							CASE[6]++;
 							currCase = 7;
@@ -490,6 +492,9 @@ public class main {
 				// }
 				// add
 				// output
+
+
+				//結果の出力
 				System.out.print(roop1 * paraSet.length + roop2 + "\t" + "/"
 						+ "\t" + paraSet.length * paraSet.length);
 				for (int i = 0; i < 4; i++) {
@@ -504,6 +509,9 @@ public class main {
 					output[roop1 * paraSet.length + roop2][8 + j] = CASE[j];
 					System.out.print("\t" + CASE[j]);
 				}
+				//撤退店舗の出力
+				output[roop1 * paraSet.length + roop2][8 + 7] = deadCom;
+				System.out.print("\t" + deadCom);
 				System.out.println();
 			}
 		}
