@@ -3,28 +3,35 @@ import java.util.ArrayList;
 
 public class main {
 
+	// シミュレーション当たりのステップ数
 	public static int simulationNum = 100000;
+	// カスタマーエージェントの数
 	public static int custNum = 100;
+	// 一期あたりのステップ数
 	public static int comBehaveSpan = 100;
+	// 店舗エージェントの数
 	public static int comNum = 2;
-	public static int italationNum =1;
+	// シミュレーションの実行回数
+	public static int italationNum = 1;
 
 	public static customer[] custList = new customer[custNum];
 	public static company[] comList = new company[comNum];// num0=TESCO,num1=Sainsbury's
 
 	public static ArrayList<company> comArray = new ArrayList<company>();
 
-	public static MersenneTwister rnd = new MersenneTwister(
-			(int) (10000 * Math.random()));
+	public static MersenneTwister rnd = new MersenneTwister((int) (10000 * Math.random()));
 
 	public static void main(String[] args) {
 
-		// add
-		inputPara input = new inputPara("para.csv");
+		// 外部パラメータファイルからの入力
+		inputPara input = new inputPara("paraOne.csv");
 		double[][] paraSet = input.getPara();
-		double[][] output = new double[paraSet.length * paraSet.length][4 * 2 + 7+ 1];
+
+		// 結果ファイル出力の準備
+		double[][] output = new double[paraSet.length * paraSet.length][4 * 2 + 7 + 1];
 		outputCSV outputCSV = new outputCSV();
 
+		// 上のこーどと重複？
 		custList = new customer[custNum];
 		comList = new company[comNum];// num0=TESCO,num1=Sainsbury's
 		comArray = new ArrayList<company>();
@@ -34,20 +41,30 @@ public class main {
 				// \add
 				// outputCSV output = new outputCSV();
 				// int[][] behavior = new int[simulationNum][custNum];
+				// 各企業の期ごとの利益の推移
 				int[][] profit = new int[simulationNum / comBehaveSpan][comNum];
+				// 各企業の期ごとの売り上げの推移
 				int[][] sales = new int[simulationNum / comBehaveSpan][comNum];
+				// 各企業の期ごとのbudget?の推移
 				int[][] budget = new int[simulationNum / comBehaveSpan][comNum];
+				// 各企業の期ごとのcost?の推移
 				int[][] cost = new int[simulationNum / comBehaveSpan][comNum];
+				// 各企業の期ごとのsalesFreq?の推移
 				int[][] salesFreq = new int[simulationNum / comBehaveSpan][comNum];
-				double[] sumPreference = new double[simulationNum
-						/ comBehaveSpan];
-				int[][][] responsiveStrategyList = new int[simulationNum
-						/ comBehaveSpan][comNum][3];
-
+				double[] sumPreference = new double[simulationNum / comBehaveSpan];
+				int[][][] responsiveStrategyList = new int[simulationNum / comBehaveSpan][comNum][3];
+				// 各企業のがとった行動の履歴
 				int[][] action = new int[simulationNum / comBehaveSpan][comNum];
+				// 各店舗の行動の評価値の履歴
+				double[][][] actionEvaluateHist = new double[comNum][simulationNum / comBehaveSpan][9];
+
+				// 各顧客のステップごとの購入店舗
+				int[][] customerBuyStoreHist = new int[simulationNum][custNum];
+				// 各顧客のステップ・店舗ごとの保有ポイント数
+				int[][][] customerHavePoint = new int[comNum][simulationNum][custNum];
 
 				int[] CASE = new int[7];
-				int deadCom=-1;
+				int deadCom = -1;
 				for (int i = 0; i < 7; i++) {
 					CASE[i] = 0;
 				}
@@ -59,6 +76,7 @@ public class main {
 				int win2 = 0;
 				int draw = 0;
 
+				// 各店舗のステップごとの売り上げの推移
 				int[][] salesStep = new int[simulationNum][comNum];
 
 				double[][][][] value = new double[simulationNum / comBehaveSpan][comNum][3][3];
@@ -89,7 +107,11 @@ public class main {
 					}
 				}
 				int a = 0;
+
+				// シミュレーションの開始
 				for (int roop = 0; roop < italationNum; roop++) {
+
+					// 合計で１になる4つの数字を3店舗分生成
 					comArray.clear();
 					double a1 = rnd.next();
 					double a2 = rnd.next();
@@ -119,7 +141,7 @@ public class main {
 					c3 = c3 / sumC;
 					c4 = c4 / sumC;
 
-					// initialize part
+					// カスタマーエージェントの初期化
 					for (int i = 0; i < custNum; i++) {
 						if (i < 0) {
 							custList[i] = new customer(0.02, 60);
@@ -144,42 +166,50 @@ public class main {
 					// comArray.add(comList[1]);
 					// }
 
+					// 店舗エージェントの初期化
 					if (comNum == 2) {
-						comList[0] = new company(paraSet[roop1][0],
-								paraSet[roop1][1], paraSet[roop1][2],
+						comList[0] = new company(paraSet[roop1][0], paraSet[roop1][1], paraSet[roop1][2],
 								paraSet[roop1][3], 0, 0, 0, 0, 0, 3);
-						comList[1] = new company(paraSet[roop2][0],
-								paraSet[roop2][1], paraSet[roop2][2],
+						comList[1] = new company(paraSet[roop2][0], paraSet[roop2][1], paraSet[roop2][2],
 								paraSet[roop2][3], 0, 0, 0, 0, 1, 3);
-						// comList[2] = new company(50, 50, 0, 0, 2, 3);
 						comArray.add(comList[0]);
 						comArray.add(comList[1]);
 					}
 
 					if (comNum == 3) {
-						comList[0] = new company(a1, a2, a3, a4, 0, 0, 0, 0, 0,
-								3);
-						comList[1] = new company(b1, b2, b3, b4, 0, 0, 0, 0, 1,
-								3);
-						comList[2] = new company(c1, c2, c4, c4, 0, 0, 0, 0, 2,
-								3);
+						comList[0] = new company(a1, a2, a3, a4, 0, 0, 0, 0, 0, 3);
+						comList[1] = new company(b1, b2, b3, b4, 0, 0, 0, 0, 1, 3);
+						comList[2] = new company(c1, c2, c4, c4, 0, 0, 0, 0, 2, 3);
 						comArray.add(comList[0]);
 						comArray.add(comList[1]);
 						comArray.add(comList[2]);
 					}
 
+					// シミュレーション一回当たりのループ開始
 					for (int i = 0; i < simulationNum; i++) {
 
 						// System.out.println(i);
+
+						// 毎ステップのカスタマーの行動
 						for (int j = 0; j < custList.length; j++) {
 							custList[j].action();
 							// custmerBehavior[i][3*j]=custList[j].getChoice();
 							// custmerBehavior[i][3*j+1]=custList[j].getLookDiscount();
 							// custmerBehavior[i][3*j+2]=custList[j].getLookPoint();
 
+							// 各顧客のステップごとの購入店舗と
+							// 各顧客のステップ・店舗ごとの保有ポイント数を記録
+							if (paraSet.length == 1 && italationNum == 1) {
+								customerBuyStoreHist[i][j] = custList[j].getChoice();
+								for (int k = 0; k < comNum; k++) {
+									customerHavePoint[k][i][j] = custList[j].getPrefComPoint(k);
+								}
+							}
+
 						}
 						// System.out.println(custList[0].getPrefComPoint(0)+"\t"+custList[0].getPrefComPoint(1));
 
+						// 期ごとの店舗の行動
 						if (i % comBehaveSpan == 0 && i != 0) {
 							// System.out.println(comList[0].getSellNH()+"\t"+comList[1].getSellNH());
 
@@ -188,23 +218,16 @@ public class main {
 								comList[j].calcAcounting();
 
 								// add profit,sales to list
-								sales[i / comBehaveSpan][j] = comList[j]
-										.getSales();
-								budget[i / comBehaveSpan][j] = comList[j]
-										.getBudget();
-
-								salesFreq[i / comBehaveSpan][j] += comList[j]
-										.getSalesFreq();
-								profit[i / comBehaveSpan][j] = comList[j]
-										.getProfit();
-								cost[i / comBehaveSpan][j] = (int) comList[j]
-										.getCost();
+								sales[i / comBehaveSpan][j] = comList[j].getSales();
+								budget[i / comBehaveSpan][j] = comList[j].getBudget();
+								salesFreq[i / comBehaveSpan][j] += comList[j].getSalesFreq();
+								profit[i / comBehaveSpan][j] = comList[j].getProfit();
+								cost[i / comBehaveSpan][j] = (int) comList[j].getCost();
 
 							}
 
 							for (int j = 0; j < custList.length; j++) {
-								sumPreference[i / comBehaveSpan] += custList[j]
-										.getUtility() / comBehaveSpan;
+								sumPreference[i / comBehaveSpan] += custList[j].getUtility() / comBehaveSpan;
 								custList[j].reset();
 							}
 
@@ -213,14 +236,19 @@ public class main {
 								comList[j].dicisionMaking();
 								for (int k = 0; k < value[0][0].length; k++) {
 									for (int l = 0; l < value[0][0][0].length; l++) {
-										value[i / comBehaveSpan][j][k][l] += comList[j]
-												.getValue()[k][l];
+										value[i / comBehaveSpan][j][k][l] += comList[j].getValue()[k][l];
 									}
 								}
-								action[i / comBehaveSpan][j] = comList[j]
-										.getAction();
-								responsiveStrategyList[i / comBehaveSpan][j] = comList[j]
-										.getResponsiveStrategy(3);
+								action[i / comBehaveSpan][j] = comList[j].getAction();
+								responsiveStrategyList[i / comBehaveSpan][j] = comList[j].getResponsiveStrategy(3);
+
+								// 各店舗の行動の評価値の履歴を記録
+								if (paraSet.length == 1 && italationNum == 1) {
+									for (int l = 0; l < 9; l++) {
+										actionEvaluateHist[j][i / comBehaveSpan][l] = comList[j].getValue()[l / 3][l
+												% 3];
+									}
+								}
 								// if (j == 0) {
 								// System.out.println(comList[j].getValue()[0][0]
 								// + "\t" + comList[j].getValue()[0][1] + "\t"
@@ -253,12 +281,10 @@ public class main {
 
 					}
 					if ((double) comList[0].getSales()
-							/ (double) (comList[0].getSales() + comList[1]
-									.getSales()) > 0.9) {
+							/ (double) (comList[0].getSales() + comList[1].getSales()) > 0.9) {
 						win1++;
 					} else if ((double) comList[1].getSales()
-							/ (double) (comList[0].getSales() + comList[1]
-									.getSales()) > 0.9) {
+							/ (double) (comList[0].getSales() + comList[1].getSales()) > 0.9) {
 						win2++;
 					} else {
 						draw++;
@@ -301,8 +327,7 @@ public class main {
 								if (deadCom == 0 && sales[i][0] > sales[i][1]) {
 									shareOOI = 1;
 									break;
-								} else if (deadCom == 0
-										&& sales[i][1] > sales[i][0]) {
+								} else if (deadCom == 0 && sales[i][1] > sales[i][0]) {
 									shareOOI = 0;
 									break;
 								}
@@ -310,15 +335,14 @@ public class main {
 								if (deadCom == 1 && sales[i][0] > sales[i][1]) {
 									shareOOI = 0;
 									break;
-								} else if (deadCom == 1
-										&& sales[i][1] > sales[i][0]) {
+								} else if (deadCom == 1 && sales[i][1] > sales[i][0]) {
 									shareOOI = 1;
 									break;
 								}
 							}
 						}
 
-						//ケースの判定
+						// ケースの判定
 						if (deadTiming < 100) {
 							CASE[6]++;
 							currCase = 7;
@@ -365,14 +389,11 @@ public class main {
 						for (int j = 0; j < 2; j++) {
 							for (int i = 0; i < span; i++) {
 
-								if (action[simulationNum / comBehaveSpan - 1
-										- i][j] == 0) {
+								if (action[simulationNum / comBehaveSpan - 1 - i][j] == 0) {
 									uCount++;
-								} else if (action[simulationNum / comBehaveSpan
-										- 1 - i][j] == 1) {
+								} else if (action[simulationNum / comBehaveSpan - 1 - i][j] == 1) {
 									dCount++;
-								} else if (action[simulationNum / comBehaveSpan
-										- 1 - i][j] == 2) {
+								} else if (action[simulationNum / comBehaveSpan - 1 - i][j] == 2) {
 									mCount++;
 								}
 
@@ -493,10 +514,8 @@ public class main {
 				// add
 				// output
 
-
-				//結果の出力
-				System.out.print(roop1 * paraSet.length + roop2 + "\t" + "/"
-						+ "\t" + paraSet.length * paraSet.length);
+				// 結果の出力
+				System.out.print(roop1 * paraSet.length + roop2 + "\t" + "/" + "\t" + paraSet.length * paraSet.length);
 				for (int i = 0; i < 4; i++) {
 					output[roop1 * paraSet.length + roop2][i] = paraSet[roop1][i];
 					System.out.print("\t" + paraSet[roop1][i]);
@@ -509,10 +528,23 @@ public class main {
 					output[roop1 * paraSet.length + roop2][8 + j] = CASE[j];
 					System.out.print("\t" + CASE[j]);
 				}
-				//撤退店舗の出力
+				// 撤退店舗の出力
 				output[roop1 * paraSet.length + roop2][8 + 7] = deadCom;
 				System.out.print("\t" + deadCom);
 				System.out.println();
+
+				// 1試行の時のみ出力
+				if (paraSet.length == 1 && italationNum == 1) {
+					outputCSV.outputInt("customerBuyStoreHist", customerBuyStoreHist);
+					outputCSV.outputInt("action", action);
+
+					for (int k = 0; k < comNum; k++) {
+						outputCSV.outputInt("customerHavePoint" + k, customerHavePoint[k]);
+						outputCSV.outputDouble("actionEvaluateHist" + k, actionEvaluateHist[k]);
+
+					}
+
+				}
 			}
 		}
 
@@ -536,9 +568,13 @@ class customer {
 	private double p1 = 0.8;
 	private double p2 = 1.2;
 
+	// ロックインされていると1,されていないと0
 	private int lockIn = 0;
+	// ロックインされているとき、どの店にロックインされているか
 	private int lockInCom = 100;
+	// ロックインされるポイント数の基準
 	private int threshold = 1000;
+	// 店ごとの保有ポイント数
 	private ArrayList<Integer> point = new ArrayList<Integer>();
 
 	private double intercept = 0.3;
@@ -577,6 +613,7 @@ class customer {
 
 		}
 
+		// 先期ロックインされていれば優良顧客化
 		if (lockIn == 1) {
 			flatOrHierarchy[lockInCom] = 1;
 		}
@@ -590,6 +627,7 @@ class customer {
 		u = 0;
 	}
 
+	// 顧客の購買行動、mainから呼び出される
 	public void action() {
 
 		int com;
@@ -600,6 +638,7 @@ class customer {
 		buyAndLearn(com);
 	}
 
+	// 購入店舗の選択
 	private int choice() {
 
 		int com = 100;
@@ -616,6 +655,7 @@ class customer {
 		double[] pointValue = new double[main.comArray.size()];
 		double[] costValue = new double[main.comArray.size()];
 
+		// 店舗ごとの値引きの割合の初期化と取得
 		for (int i = 0; i < main.comArray.size(); i++) {
 			discountValue[i] = 0;
 		}
@@ -626,6 +666,8 @@ class customer {
 				discountValue[i] = (double) main.comArray.get(i).getProb1();
 			}
 		}
+
+		// 店舗ごとのポイントの割合の初期化と取得
 		for (int i = 0; i < main.comArray.size(); i++) {
 			pointValue[i] = 0;
 		}
@@ -637,20 +679,22 @@ class customer {
 			}
 		}
 
+		// 店舗ごとの販促費の総額を取得
 		for (int i = 0; i < main.comArray.size(); i++) {
 			costValue[i] = (double) main.comArray.get(i).getCost();
 		}
 
+		// 値引きの割合、ポイントの割合、販促費の総額をもとに、店舗ごとの選好を計算
 		double[] preference = new double[main.comArray.size()];
 		double sumPreference = 0;
 		for (int i = 0; i < main.comArray.size(); i++) {
-			preference[i] = (calcPreference(discountValue[i], pointValue[i],
-					point.get(i), costValue[i]));
+			preference[i] = (calcPreference(discountValue[i], pointValue[i], point.get(i), costValue[i]));
 			// System.out.println(preference[i] +
 			// "\t"+discountValue[i]+"\t"+pointValue[i]+"\t"+point.get(i));
 			sumPreference += (preference[i]);
 		}
 
+		// ルーレット選択を実施
 		// if (high == 2.8)
 		// System.out.println(preference[0] / sumPreference);
 		double numerator = 0;
@@ -671,6 +715,7 @@ class customer {
 		// com = lockInCom;
 		// }
 
+		// このコードをなくしたらどうなる？
 		if (com == 100) {
 			com = (int) (main.comArray.size() * main.rnd.next());
 		}
@@ -681,15 +726,14 @@ class customer {
 		return com;
 	}
 
-	private double calcPreference(double discount, double point,
-			int mountOfPoint, double cost) {
+	// 値引きの割合、ポイントの割合、販促費の総額をもとに、店舗ごとの選好を計算
+	private double calcPreference(double discount, double point, int mountOfPoint, double cost) {
 
 		double p = high * (double) mountOfPoint + intercept;
 
 		// double preference = Math.log(cost + 1.1)
 		// * ((double) discount + (double) point * p);
-		double preference = (cost + 1)
-				* ((double) discount * (1 - p) + (double) point * p);
+		double preference = (cost + 1) * ((double) discount * (1 - p) + (double) point * p);
 
 		// if(high==2.8)
 		// System.out.println(Math.log(cost+1.1)+"\t"+discount + "\t" + point +
@@ -699,10 +743,12 @@ class customer {
 
 	private void buyAndLearn(int comNum) {
 
+		// 商品の購入
 		main.comArray.get(comNum).sell(flatOrHierarchy[comNum]);
 
+		// ポイントを入手し、一定ポイント以上ならロックイン状態
+		// ただし、優良顧客となるのは次期から
 		point.set(comNum, point.get(comNum) + 1);
-
 		if (lockIn == 0 && point.get(comNum) > threshold) {
 			lockIn = 1;
 			lockInCom = comNum;
@@ -774,8 +820,7 @@ class company {
 
 	private int strategy;// 0 is tesco, 1 is sainsbury's
 
-	public company(double p1, double p2, double p3, double p4, int df, int pf,
-			int dh, int ph, int st, int sce) {
+	public company(double p1, double p2, double p3, double p4, int df, int pf, int dh, int ph, int st, int sce) {
 		discountFlat = df;
 		pointFlat = pf;
 		discountHierarchy = dh;
@@ -801,6 +846,7 @@ class company {
 		}
 	}
 
+	// 当期利益の計算
 	private int calcProfit() {
 
 		double VCsum = 0;
@@ -820,6 +866,7 @@ class company {
 		return prof;
 	}
 
+	// その期の会計を計算と学習
 	public void calcAcounting() {
 
 		preSales = sales;
@@ -830,6 +877,7 @@ class company {
 		sellNum = 0;
 		sellNumHie = 0;
 
+		// 内部留保を計算し、ゼロで撤退
 		if (death != 1) {
 			budget += profit;
 		}
@@ -853,8 +901,11 @@ class company {
 			}
 		}
 
+		// 会計の結果をもとに、学習を行う
 		if (death != 1) {
+
 			// Q値の更新
+			// 下の行はたぶんいらない
 			double afterQ = value[action][getMaxQAction(action)];
 			// value[s][action] = value[s][action] + alpha
 			// * (gamma * afterQ - value[s][action]);
@@ -873,6 +924,7 @@ class company {
 
 	}
 
+	// Q値が最大の行動をactionに代入する、sには先期の行動を代入する
 	public void dicisionMaking() {
 
 		if (main.comNum == 2) {
@@ -885,14 +937,11 @@ class company {
 
 		if (main.comNum == 3) {
 			if (strategy == 0) {
-				s = 3 * main.comList[1].getPreAction()
-						+ main.comList[2].getPreAction();
+				s = 3 * main.comList[1].getPreAction() + main.comList[2].getPreAction();
 			} else if (strategy == 1) {
-				s = 3 * main.comList[2].getPreAction()
-						+ main.comList[0].getPreAction();
+				s = 3 * main.comList[2].getPreAction() + main.comList[0].getPreAction();
 			} else {
-				s = 3 * main.comList[0].getPreAction()
-						+ main.comList[1].getPreAction();
+				s = 3 * main.comList[0].getPreAction() + main.comList[1].getPreAction();
 			}
 		}
 
@@ -942,6 +991,7 @@ class company {
 		return maxA;
 	}
 
+	// actionに応じて、値上げ、値下げ、維持を行う
 	private void act(int action) {
 
 		int unit = 5;
@@ -957,6 +1007,7 @@ class company {
 
 	}
 
+	// 商品の販売、カスタマーから呼び出される
 	public void sell(int flatOrHierarchy) {
 		if (flatOrHierarchy == 0) {
 			sellNum++;
@@ -1047,6 +1098,7 @@ class company {
 		return budget;
 	}
 
+	// 反応戦略を返す
 	public int[] getResponsiveStrategy(int num) {
 		int[] list = new int[num];
 
