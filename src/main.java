@@ -1,13 +1,12 @@
-
 import java.util.ArrayList;
 
 public class main {
 
-	public static int simulationNum = 100000;
+	public static int simulationNum = 10000;
 	public static int custNum = 100;
 	public static int comBehaveSpan = 100;
 	public static int comNum = 2;
-	public static int italationNum =1;
+	public static int italationNum = 600;
 
 	public static customer[] custList = new customer[custNum];
 	public static company[] comList = new company[comNum];// num0=TESCO,num1=Sainsbury's
@@ -20,7 +19,7 @@ public class main {
 	public static void main(String[] args) {
 
 		// add
-		inputPara input = new inputPara("para.csv");
+		inputPara input = new inputPara("最適反応戦略の推移分布.csv");
 		double[][] paraSet = input.getPara();
 		double[][] output = new double[paraSet.length * paraSet.length][4 * 2 + 7];
 		outputCSV outputCSV = new outputCSV();
@@ -144,12 +143,19 @@ public class main {
 					// }
 
 					if (comNum == 2) {
-						comList[0] = new company(paraSet[roop1][0],
-								paraSet[roop1][1], paraSet[roop1][2],
-								paraSet[roop1][3], 0, 0, 0, 0, 0, 3);
-						comList[1] = new company(paraSet[roop2][0],
-								paraSet[roop2][1], paraSet[roop2][2],
-								paraSet[roop2][3], 0, 0, 0, 0, 1, 3);
+						//						comList[0] = new company(paraSet[roop1][0],
+						//						paraSet[roop1][1], paraSet[roop1][2],
+						//						paraSet[roop1][3], 0, 0, 0, 0, 0, 3);
+						//				comList[1] = new company(paraSet[roop2][0],
+						//						paraSet[roop2][1], paraSet[roop2][2],
+						//						paraSet[roop2][3], 0, 0, 0, 0, 1, 3);
+
+						//手動設定
+						comList[0] = new company(0.75,
+								0.25, 0, 0, 0, 0, 0, 0, 0, 3);
+						comList[1] = new company(0.75,
+								0.25, 0, 0, 0, 0, 0, 0, 1, 3);
+
 						// comList[2] = new company(50, 50, 0, 0, 2, 3);
 						comArray.add(comList[0]);
 						comArray.add(comList[1]);
@@ -243,6 +249,12 @@ public class main {
 								// + value[i / comBehaveSpan][j][2][2]);
 								// }
 							}
+							System.out.println(i / comBehaveSpan + "\t" + comList[0].getResponsiveStrategy(3)[0] + "\t"
+									+ comList[0].getResponsiveStrategy(3)[1] + "\t"
+									+ comList[0].getResponsiveStrategy(3)[1] + "\t"
+									+ comList[1].getResponsiveStrategy(3)[0] + "\t"
+									+ comList[1].getResponsiveStrategy(3)[1] + "\t"
+									+ comList[1].getResponsiveStrategy(3)[2]);
 
 						}
 						for (int j = 0; j < comList.length; j++) {
