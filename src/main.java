@@ -12,7 +12,7 @@ public class main {
 	// 店舗エージェントの数
 	public static int comNum = 2;
 	// シミュレーションの実行回数
-	public static int italationNum = 1;
+	public static int italationNum = 10;
 
 	public static customer[] custList = new customer[custNum];
 	public static company[] comList = new company[comNum];// num0=TESCO,num1=Sainsbury's
@@ -24,11 +24,11 @@ public class main {
 	public static void main(String[] args) {
 
 		// 外部パラメータファイルからの入力
-		inputPara input = new inputPara("paraOne.csv");
+		inputPara input = new inputPara("para.csv");
 		double[][] paraSet = input.getPara();
 
 		// 結果ファイル出力の準備
-		double[][] output = new double[paraSet.length * paraSet.length][4 * 2 + 7 + 1];
+		double[][] output = new double[paraSet.length * paraSet.length][4 * 2 + 7 + 2];
 		outputCSV outputCSV = new outputCSV();
 
 		// 上のこーどと重複？
@@ -65,9 +65,17 @@ public class main {
 
 				int[] CASE = new int[7];
 				int deadCom = -1;
+				int[] deadCount = new int[comList.length];
 				for (int i = 0; i < 7; i++) {
 					CASE[i] = 0;
 				}
+				for(int i=0;i<comList.length;i++){
+					deadCount[i]=0;
+				}
+
+				//協調の発生回数
+				int corp =0;
+				
 				// double[][] custmerBehavior = new
 				// double[simulationNum][custNum * 3];
 
@@ -166,15 +174,24 @@ public class main {
 					// comArray.add(comList[1]);
 					// }
 
-					// 店舗エージェントの初期化
+//					// 店舗エージェントの初期化
+//					if (comNum == 2) {
+//						comList[0] = new company(paraSet[roop1][0], paraSet[roop1][1], paraSet[roop1][2],
+//								paraSet[roop1][3], 0, 0, 0, 0, 0, 3);
+//						comList[1] = new company(paraSet[roop2][0], paraSet[roop2][1], paraSet[roop2][2],
+//								paraSet[roop2][3], 0, 0, 0, 0, 1, 3);
+//						comArray.add(comList[0]);
+//						comArray.add(comList[1]);
+//					}
+
+					// 店舗エージェントの初期化（戦略の手動設定用）
 					if (comNum == 2) {
-						comList[0] = new company(paraSet[roop1][0], paraSet[roop1][1], paraSet[roop1][2],
-								paraSet[roop1][3], 0, 0, 0, 0, 0, 3);
-						comList[1] = new company(paraSet[roop2][0], paraSet[roop2][1], paraSet[roop2][2],
-								paraSet[roop2][3], 0, 0, 0, 0, 1, 3);
+						comList[0] = new company(0.75,0,0.25,0, 0, 0, 0, 0, 0, 3);
+						comList[1] = new company(0.25,0.25,0,0.5, 0, 0, 0, 0, 1, 3);
 						comArray.add(comList[0]);
 						comArray.add(comList[1]);
 					}
+
 
 					if (comNum == 3) {
 						comList[0] = new company(a1, a2, a3, a4, 0, 0, 0, 0, 0, 3);
@@ -201,7 +218,7 @@ public class main {
 							// 各顧客のステップ・店舗ごとの保有ポイント数を記録
 							if (paraSet.length == 1 && italationNum == 1) {
 								customerBuyStoreHist[i][j] = custList[j].getChoice();
-								for (int k = 0; k < comNum; k++) {
+								for (int k = 0; k < comArray.size(); k++) {
 									customerHavePoint[k][i][j] = custList[j].getPrefComPoint(k);
 								}
 							}
@@ -410,6 +427,19 @@ public class main {
 						}
 					}
 
+					// 撤退店舗のカウント
+					if(deadCom!=-1)
+					deadCount[deadCom]++;
+
+					//協調回数のカウント
+					for(int i=0;i<action.length-1;i++){
+						if(action[i][0]==2&&action[i][1]==2&&action[i+1][0]==2&&action[i+1][1]==2){
+							corp++;
+							break;
+						}
+					}
+					
+					
 					// System.out.println(roop + "\t"+ currCase + "\t"
 					// +deadTiming);
 
@@ -529,8 +559,10 @@ public class main {
 					System.out.print("\t" + CASE[j]);
 				}
 				// 撤退店舗の出力
-				output[roop1 * paraSet.length + roop2][8 + 7] = deadCom;
-				System.out.print("\t" + deadCom);
+					output[roop1 * paraSet.length + roop2][8 + 7]=deadCount[0];
+					output[roop1 * paraSet.length + roop2][8 + 8]=deadCount[1];
+				System.out.print("\t" + deadCount[0]+"\t" + deadCount[1]);
+				System.out.print("\t" + corp);
 				System.out.println();
 
 				// 1試行の時のみ出力
@@ -709,6 +741,21 @@ class customer {
 				break;
 			}
 		}
+
+//		//(選好が最大の店舗を選択、同一の時はランダム、2店舗の時のみ対応)
+//		try{
+//		if(preference[0]>preference[1]){
+//			com=0;
+//		}else if(preference[0]<preference[1]){
+//			com=1;
+//		}else if(main.rnd.next()<0.5){
+//			com=0;
+//		}else{
+//			com=1;
+//		}
+//		}catch(ArrayIndexOutOfBoundsException e){
+//			com=0;
+//		}
 		// System.out.println(preference[0] + "\t" +preference[1]+ "\t"
 		// +com);
 		// } else {
