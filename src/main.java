@@ -2,11 +2,11 @@ import java.util.ArrayList;
 
 public class main {
 
-	public static int simulationNum = 10000;
+	public static int simulationNum = 100000;
 	public static int custNum = 100;
 	public static int comBehaveSpan = 100;
 	public static int comNum = 2;
-	public static int italationNum = 600;
+	public static int italationNum = 100;
 
 	public static customer[] custList = new customer[custNum];
 	public static company[] comList = new company[comNum];// num0=TESCO,num1=Sainsbury's
@@ -21,7 +21,7 @@ public class main {
 		// add
 		inputPara input = new inputPara("最適反応戦略の推移分布.csv");
 		double[][] paraSet = input.getPara();
-		double[][] output = new double[paraSet.length * paraSet.length][4 * 2 + 7];
+		double[][] output = new double[paraSet.length * paraSet.length][4 * 2 + 8];
 		outputCSV outputCSV = new outputCSV();
 
 		custList = new customer[custNum];
@@ -45,8 +45,9 @@ public class main {
 
 				int[][] action = new int[simulationNum / comBehaveSpan][comNum];
 
-				int[] CASE = new int[7];
-				for (int i = 0; i < 7; i++) {
+				//CASE8はcom0の撤退回数
+				int[] CASE = new int[8];
+				for (int i = 0; i < CASE.length; i++) {
 					CASE[i] = 0;
 				}
 				// double[][] custmerBehavior = new
@@ -143,18 +144,20 @@ public class main {
 					// }
 
 					if (comNum == 2) {
-						//						comList[0] = new company(paraSet[roop1][0],
-						//						paraSet[roop1][1], paraSet[roop1][2],
-						//						paraSet[roop1][3], 0, 0, 0, 0, 0, 3);
-						//				comList[1] = new company(paraSet[roop2][0],
-						//						paraSet[roop2][1], paraSet[roop2][2],
-						//						paraSet[roop2][3], 0, 0, 0, 0, 1, 3);
+												comList[0] = new company(paraSet[roop1][0],
+												paraSet[roop1][1], paraSet[roop1][2],
+												paraSet[roop1][3], 0, 0, 0, 0, 0, 3);
+										comList[1] = new company(paraSet[roop2][0],
+												paraSet[roop2][1], paraSet[roop2][2],
+												paraSet[roop2][3], 0, 0, 0, 0, 1, 3);
+
+
 
 						//手動設定
-						comList[0] = new company(0.75,
-								0.25, 0, 0, 0, 0, 0, 0, 0, 3);
-						comList[1] = new company(0.75,
-								0.25, 0, 0, 0, 0, 0, 0, 1, 3);
+//						comList[0] = new company(0.75,
+//								0.25, 0, 0, 0, 0, 0, 0, 0, 3);
+//						comList[1] = new company(0.75,
+//								0.25, 0, 0, 0, 0, 0, 0, 1, 3);
 
 						// comList[2] = new company(50, 50, 0, 0, 2, 3);
 						comArray.add(comList[0]);
@@ -249,12 +252,13 @@ public class main {
 								// + value[i / comBehaveSpan][j][2][2]);
 								// }
 							}
-							System.out.println(i / comBehaveSpan + "\t" + comList[0].getResponsiveStrategy(3)[0] + "\t"
-									+ comList[0].getResponsiveStrategy(3)[1] + "\t"
-									+ comList[0].getResponsiveStrategy(3)[1] + "\t"
-									+ comList[1].getResponsiveStrategy(3)[0] + "\t"
-									+ comList[1].getResponsiveStrategy(3)[1] + "\t"
-									+ comList[1].getResponsiveStrategy(3)[2]);
+							//最適反応に関するログ
+//							System.out.println(i / comBehaveSpan + "\t" + comList[0].getResponsiveStrategy(3)[0] + "\t"
+//									+ comList[0].getResponsiveStrategy(3)[1] + "\t"
+//									+ comList[0].getResponsiveStrategy(3)[1] + "\t"
+//									+ comList[1].getResponsiveStrategy(3)[0] + "\t"
+//									+ comList[1].getResponsiveStrategy(3)[1] + "\t"
+//									+ comList[1].getResponsiveStrategy(3)[2]);
 
 						}
 						for (int j = 0; j < comList.length; j++) {
@@ -295,6 +299,8 @@ public class main {
 
 					if (sales[simulationNum / comBehaveSpan - 1][0] == 0) {
 						deadCom = 0;
+						//CASE8はcom0の撤退回数
+						CASE[7]++;
 						winCom = 1;
 						finished = 1;
 					} else if (sales[simulationNum / comBehaveSpan - 1][1] == 0) {
@@ -459,14 +465,14 @@ public class main {
 				//
 				// if (comNum == 2) {
 				//
-				// for (int i = 0; i < simulationNum / comBehaveSpan; i++) {
-				// System.out.println(profit[i][0] / italationNum + "\t"
-				// + profit[i][1] / italationNum + "\t" + sales[i][0]
-				// + "\t" + sales[i][1] + "\t" + cost[i][0] + "\t"
-				// + cost[i][1] + "\t" + budget[i][0] + "\t"
-				// + budget[i][1] + "\t" + salesFreq[i][0] + "\t"
-				// + salesFreq[i][1] + "\t" + sumPreference[i]);
-				// }
+				 for (int i = 0; i < simulationNum / comBehaveSpan; i++) {
+				 System.out.println(profit[i][0] / italationNum + "\t"
+				 + profit[i][1] / italationNum + "\t" + sales[i][0]
+				 + "\t" + sales[i][1] + "\t" + cost[i][0] + "\t"
+				 + cost[i][1] + "\t" + budget[i][0] + "\t"
+				 + budget[i][1] + "\t" + salesFreq[i][0] + "\t"
+				 + salesFreq[i][1] + "\t" + sumPreference[i]);
+				 }
 				//
 				// for (int i = 0; i < responsiveStrategyList.length; i++) {
 				// for (int j = 0; j < responsiveStrategyList[i].length; j++) {
@@ -512,7 +518,8 @@ public class main {
 					output[roop1 * paraSet.length + roop2][4 + j] = paraSet[roop2][j];
 					System.out.print("\t" + paraSet[roop2][j]);
 				}
-				for (int j = 0; j < 7; j++) {
+				for (int j = 0; j < CASE.length; j++) {
+					//CASE8はcom0の撤退回数
 					output[roop1 * paraSet.length + roop2][8 + j] = CASE[j];
 					System.out.print("\t" + CASE[j]);
 				}
@@ -526,542 +533,5 @@ public class main {
 	}
 }
 
-class customer {
 
-	private double[] prefCom = new double[main.comNum];
-	private double[] prefComDiscount = new double[main.comNum];
-	private int[] prefComPoint = new int[main.comNum];
 
-	private double u;
-	// parameta
-	private double alpha = 0.8;
-	private int mp1 = 100;
-	private int mp2 = 2000;
-	private double p1 = 0.8;
-	private double p2 = 1.2;
-
-	private int lockIn = 0;
-	private int lockInCom = 100;
-	private int threshold = 1000;
-	private ArrayList<Integer> point = new ArrayList<Integer>();
-
-	private double intercept = 0.3;
-	private double high;
-
-	private double lookDiscount;
-	private double lookPoint;
-	private int choice;
-
-	private double budget = 0;
-
-	private int[] flatOrHierarchy = new int[main.comNum];
-
-	public customer(double intercep, int th) {
-
-		high = intercep;
-		threshold = th;
-
-		u = 0;
-
-		for (int i = 0; i < main.comNum; i++) {
-			prefCom[i] = 0;
-			prefComDiscount[i] = 0;
-			prefComPoint[i] = 0;
-		}
-		for (int i = 0; i < main.comNum; i++) {
-			point.add(0);
-		}
-
-	}
-
-	public void reset() {
-
-		for (int i = 0; i < main.comNum; i++) {
-			flatOrHierarchy[i] = 0;
-
-		}
-
-		if (lockIn == 1) {
-			flatOrHierarchy[lockInCom] = 1;
-		}
-		lockIn = 0;
-		lockInCom = 100;
-
-		point.clear();
-		for (int i = 0; i < main.comArray.size(); i++) {
-			point.add(0);
-		}
-		u = 0;
-	}
-
-	public void action() {
-
-		int com;
-
-		com = choice();
-
-		choice = com;
-		buyAndLearn(com);
-	}
-
-	private int choice() {
-
-		int com = 100;
-		// if (prefCom[0] > prefCom[1]) {
-		// com = 0;
-		// } else if (prefCom[0] < prefCom[1]) {
-		// com = 1;
-		// } else {
-		// com = (int) (2 * (main.rnd.next()));
-		// }
-		// if (lockIn == 0) {
-
-		double[] discountValue = new double[main.comArray.size()];
-		double[] pointValue = new double[main.comArray.size()];
-		double[] costValue = new double[main.comArray.size()];
-
-		for (int i = 0; i < main.comArray.size(); i++) {
-			discountValue[i] = 0;
-		}
-		for (int i = 0; i < main.comArray.size(); i++) {
-			if (flatOrHierarchy[i] == 1) {
-				discountValue[i] = (double) main.comArray.get(i).getProb3();
-			} else {
-				discountValue[i] = (double) main.comArray.get(i).getProb1();
-			}
-		}
-		for (int i = 0; i < main.comArray.size(); i++) {
-			pointValue[i] = 0;
-		}
-		for (int i = 0; i < main.comArray.size(); i++) {
-			if (flatOrHierarchy[i] == 1) {
-				pointValue[i] = (double) main.comArray.get(i).getProb4();
-			} else {
-				pointValue[i] = (double) main.comArray.get(i).getProb2();
-			}
-		}
-
-		for (int i = 0; i < main.comArray.size(); i++) {
-			costValue[i] = (double) main.comArray.get(i).getCost();
-		}
-
-		double[] preference = new double[main.comArray.size()];
-		double sumPreference = 0;
-		for (int i = 0; i < main.comArray.size(); i++) {
-			preference[i] = (calcPreference(discountValue[i], pointValue[i],
-					point.get(i), costValue[i]));
-			// System.out.println(preference[i] +
-			// "\t"+discountValue[i]+"\t"+pointValue[i]+"\t"+point.get(i));
-			sumPreference += (preference[i]);
-		}
-
-		// if (high == 2.8)
-		// System.out.println(preference[0] / sumPreference);
-		double numerator = 0;
-		double rnd = main.rnd.next();
-		for (int i = 0; i < main.comArray.size(); i++) {
-			numerator += preference[i];
-			if (rnd < numerator / sumPreference) {
-				com = i;
-				lookDiscount = discountValue[i] * (1 + costValue[i]);
-				lookPoint = pointValue[i] * (1 + costValue[i]);
-				u += preference[i];
-				break;
-			}
-		}
-		// System.out.println(preference[0] + "\t" +preference[1]+ "\t"
-		// +com);
-		// } else {
-		// com = lockInCom;
-		// }
-
-		if (com == 100) {
-			com = (int) (main.comArray.size() * main.rnd.next());
-		}
-
-		// if (main.rnd.next() < 0.05) {
-		// com = 1;
-		// }
-		return com;
-	}
-
-	private double calcPreference(double discount, double point,
-			int mountOfPoint, double cost) {
-
-		double p = high * (double) mountOfPoint + intercept;
-
-		// double preference = Math.log(cost + 1.1)
-		// * ((double) discount + (double) point * p);
-		double preference = (cost + 1)
-				* ((double) discount * (1 - p) + (double) point * p);
-
-		// if(high==2.8)
-		// System.out.println(Math.log(cost+1.1)+"\t"+discount + "\t" + point +
-		// "\t" +preference);
-		return preference;
-	}
-
-	private void buyAndLearn(int comNum) {
-
-		main.comArray.get(comNum).sell(flatOrHierarchy[comNum]);
-
-		point.set(comNum, point.get(comNum) + 1);
-
-		if (lockIn == 0 && point.get(comNum) > threshold) {
-			lockIn = 1;
-			lockInCom = comNum;
-		}
-	}
-
-	public double getLookDiscount() {
-		return lookDiscount;
-	}
-
-	public double getLookPoint() {
-		return lookPoint;
-	}
-
-	public int getChoice() {
-		return choice;
-	}
-
-	public int getPrefComPoint(int i) {
-		return point.get(i);
-	}
-
-	public double getUtility() {
-		return u;
-	}
-}
-
-class company {
-
-	private int discountFlat = 100;
-	private int pointFlat = 100;
-	private int discountHierarchy;
-	private int pointHierarchy;
-
-	private double prob1;
-	private double prob2;
-	private double prob3;
-	private double prob4;
-
-	private int sellNum;
-	private int sellNumHie;
-	private int sales;
-	private int salesFreq;
-	private int profit;
-	private int preSales;
-	private int preProfit;
-	private int budget;
-
-	private int preAction;// 0 is down,1 is up
-	private int action = 0;
-
-	private int FC = 600000;
-	// private int FC = 0;
-
-	private int VC = 700;
-	private int unitPrice = 1000;
-
-	private double cost = 150;
-
-	private int countOfDeath = 0;
-	private int death = 0;
-
-	private double[][] value = new double[9][3];
-	int s;
-	private double alpha = 0.8;
-	private double gamma = 0.1;
-
-	private int scenario;
-
-	private int strategy;// 0 is tesco, 1 is sainsbury's
-
-	public company(double p1, double p2, double p3, double p4, int df, int pf,
-			int dh, int ph, int st, int sce) {
-		discountFlat = df;
-		pointFlat = pf;
-		discountHierarchy = dh;
-		pointHierarchy = ph;
-
-		prob1 = p1;
-		prob2 = p2;
-		prob3 = p3;
-		prob4 = p4;
-
-		strategy = st;
-		scenario = sce;
-		sellNum = 0;
-		sales = 0;
-		salesFreq = 0;
-		profit = 0;
-		budget = 0;
-
-		for (int i = 0; i < value.length; i++) {
-			for (int j = 0; j < value[0].length; j++) {
-				value[i][j] = 0;
-			}
-		}
-	}
-
-	private int calcProfit() {
-
-		double VCsum = 0;
-		double a = (cost * (getProb1() + getProb2()) + VC) * sellNum;
-		double b = cost * (prob3 + prob4) * sellNumHie;
-
-		VCsum = a + b;
-		int prof = (int) ((sellNum * unitPrice) - VCsum - FC);
-		// if(strategy==0)System.out.println(a +"\t" +b);
-		// if(strategy==0)System.out.println(discountHierarchy +
-		// "\t"+pointHierarchy +"\t"+sellNumHie +"\t" +b);
-		// if(strategy==0)System.out.println(discountFlat + "\t" +pointFlat +
-		// "\t" +sellNum+ "\t"+discountHierarchy + "\t"+pointHierarchy
-		// +"\t"+sellNumHie +"\t" + VCsum);
-		// if(strategy==0)System.out.println(sellNumHie);
-
-		return prof;
-	}
-
-	public void calcAcounting() {
-
-		preSales = sales;
-		preProfit = profit;
-		sales = sellNum;
-		salesFreq = sellNumHie;
-		profit = calcProfit();
-		sellNum = 0;
-		sellNumHie = 0;
-
-		if (death != 1) {
-			budget += profit;
-		}
-		// if (profit <= 0) {
-		// if (countOfDeath <= 5) {
-		// countOfDeath++;
-		// } else {
-		// if (main.comArray.size() > 1) {
-		// main.comArray.remove(main.comList[strategy]);
-		// death = 1;
-		// }
-		// }
-		// } else {
-		// countOfDeath = 0;
-		// }
-
-		if (budget < 0) {
-			if (main.comArray.size() > 1) {
-				main.comArray.remove(main.comList[strategy]);
-				death = 1;
-			}
-		}
-
-		if (death != 1) {
-			// Q値の更新
-			double afterQ = value[action][getMaxQAction(action)];
-			// value[s][action] = value[s][action] + alpha
-			// * (gamma * afterQ - value[s][action]);
-			value[s][action] = value[s][action] - alpha * value[s][action];
-
-			// 報酬の加算
-			value[s][action] += alpha * (profit - preProfit);
-
-			// if(strategy==0){
-			// System.out.println(value[s][action]+"\t"+s+"\t"+action+"\t"+profit+"\t"+preProfit+"\t"+alpha
-			// * (profit-preProfit));
-			// }
-		}
-
-		preAction = action;
-
-	}
-
-	public void dicisionMaking() {
-
-		if (main.comNum == 2) {
-			if (strategy == 0) {
-				s = main.comList[1].getPreAction();
-			} else {
-				s = main.comList[0].getPreAction();
-			}
-		}
-
-		if (main.comNum == 3) {
-			if (strategy == 0) {
-				s = 3 * main.comList[1].getPreAction()
-						+ main.comList[2].getPreAction();
-			} else if (strategy == 1) {
-				s = 3 * main.comList[2].getPreAction()
-						+ main.comList[0].getPreAction();
-			} else {
-				s = 3 * main.comList[0].getPreAction()
-						+ main.comList[1].getPreAction();
-			}
-		}
-
-		if (death != 1) {
-			action = getMaxQAction(s);
-
-			// if (main.rnd.next() < 0.02) {
-			// action = (int) (3 * main.rnd.next());
-			// }
-		} else {
-			action = 2;
-		}
-
-		if (sales == 10000) {
-			action = 1;
-		}
-
-		this.act(action);
-
-		// if(strategy==0)
-		// System.out.println(value[0][0]+"\t"+value[0][1]+"\t"+value[0][2]+"\t"+value[1][0]+"\t"+value[1][1]+"\t"+value[1][2]+"\t"+value[2][0]+"\t"+value[2][1]+"\t"+value[2][2]);
-		//
-	}
-
-	// 状態stateにおいて、最大のQ値となる行動を返す
-	public int getMaxQAction(int state) {
-		double max = value[state][0];
-		int maxA = 0;
-		ArrayList<Integer> maxArray = new ArrayList<Integer>();
-
-		for (int i = 0; i < value[0].length; i++) {
-			if (max < value[state][i]) {
-				max = value[state][i];
-				maxA = i;
-				maxArray = new ArrayList<Integer>();
-				maxArray.add(maxA);
-			} else if (max == value[state][i])
-				maxArray.add(i);
-		}
-
-		if (maxArray.size() > 1) {
-			int r = (int) (maxArray.size() * main.rnd.next());
-			maxA = maxArray.get(r);
-		}
-
-		// System.out.println(value[0][0]+"\t"+value[0][1]+"\t"+value[0][2]+"\t"+value[1][0]+"\t"+value[1][1]+"\t"+value[1][2]+"\t"+value[2][0]+"\t"+value[2][1]+"\t"+value[2][2]+"\t"+maxA);
-		return maxA;
-	}
-
-	private void act(int action) {
-
-		int unit = 5;
-
-		if (action == 0) {
-			cost += unit;
-		} else if (action == 1) {
-			if (cost > 0) {
-				cost -= unit;
-			}
-		} else {
-		}
-
-	}
-
-	public void sell(int flatOrHierarchy) {
-		if (flatOrHierarchy == 0) {
-			sellNum++;
-		} else {
-			sellNum++;
-			sellNumHie++;
-		}
-
-	}
-
-	public int getSellNH() {
-		return this.sellNumHie;
-	}
-
-	public int getDiscountFlat() {
-		discountFlat = (int) (cost * prob1);
-		return discountFlat;
-	}
-
-	public int getPointFlat() {
-		pointFlat = (int) (cost * prob2);
-		return pointFlat;
-	}
-
-	public int getDiscountHierarchy() {
-		discountHierarchy = (int) (cost * prob3);
-		return getDiscountFlat() + discountHierarchy;
-	}
-
-	public int getOnlyDiscountHierarchy() {
-		return discountHierarchy;
-	}
-
-	public int getPointHierarchy() {
-		pointHierarchy = (int) (cost * prob4);
-		return getDiscountFlat() + pointHierarchy;
-	}
-
-	public int getOnlyPointHierarchy() {
-		return pointHierarchy;
-	}
-
-	public double[][] getValue() {
-		return value;
-	}
-
-	public int getSales() {
-		return this.sales;
-	}
-
-	public int getSellN() {
-		return this.sellNum;
-	}
-
-	public int getSalesFreq() {
-		return this.salesFreq;
-	}
-
-	public int getProfit() {
-		return this.profit;
-	}
-
-	public int getPreAction() {
-		return this.preAction;
-	}
-
-	public double getCost() {
-		return cost;
-	}
-
-	public double getProb1() {
-		return prob1;
-	}
-
-	public double getProb2() {
-		return prob2;
-	}
-
-	public double getProb3() {
-		return prob1 + prob3;
-	}
-
-	public double getProb4() {
-		return prob2 + prob4;
-	}
-
-	public int getBudget() {
-		return budget;
-	}
-
-	public int[] getResponsiveStrategy(int num) {
-		int[] list = new int[num];
-
-		for (int i = 0; i < num; i++) {
-			list[i] = getMaxQAction(i);
-		}
-
-		return list;
-	}
-
-	public int getAction() {
-		return action;
-	}
-}
