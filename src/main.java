@@ -3,15 +3,15 @@ import java.util.ArrayList;
 public class main {
 
 	// シミュレーション当たりのステップ数
-	public static int simulationNum = 100000;
+	public static int simulationNum = 30000;
 	// カスタマーエージェントの数
 	public static int custNum = 100;
 	// 一期あたりのステップ数
 	public static int comBehaveSpan = 100;
 	// 店舗エージェントの数
-	public static int comNum = 2;
+	public static int comNum = 3;
 	// シミュレーションの実行回数
-	public static int italationNum = 100;
+	public static int italationNum = 10000;
 
 	public static customer[] custList = new customer[custNum];
 	public static company[] comList = new company[comNum];// num0=TESCO,num1=Sainsbury's
@@ -23,7 +23,7 @@ public class main {
 	public static void main(String[] args) {
 
 		// 外部パラメータファイルからの入力
-		inputPara input = new inputPara("para.csv");
+		inputPara input = new inputPara("paraOne.csv");
 		double[][] paraSet = input.getPara();
 
 		// 結果ファイル出力の準備
@@ -198,10 +198,10 @@ public class main {
 
 
 						//手動設定
-//						comList[0] = new company(0.75,
-//								0.25, 0, 0, 0, 0, 0, 0, 0, 3);
-//						comList[1] = new company(0.75,
-//								0.25, 0, 0, 0, 0, 0, 0, 1, 3);
+						comList[0] = new company(0.5,
+								0.5, 0, 0, 0, 0, 0, 0, 0, 3);
+						comList[1] = new company(0.5,
+								0, 0.5, 0, 0, 0, 0, 0, 1, 3);
 
 						// comList[2] = new company(50, 50, 0, 0, 2, 3);
 						comArray.add(comList[0]);
@@ -485,6 +485,21 @@ public class main {
 					// System.out.println(sales[i][0] + "\t" + sales[i][1]);
 					// }
 					// a += sales[(simulationNum / comBehaveSpan) - 1][0];
+					
+					
+					System.out.print(roop);
+					for(int i =1 ; i<simulationNum / comBehaveSpan;i=i+5){
+						System.out.print("\t"+cost[i][0]);						
+					}
+					for(int i =1 ; i<simulationNum / comBehaveSpan;i=i+5){
+						System.out.print("\t"+cost[i][1]);						
+					}
+					for(int i =1 ; i<simulationNum / comBehaveSpan;i=i+5){
+						System.out.print("\t"+cost[i][2]);						
+					}					System.out.print("\t"+((budget[simulationNum / comBehaveSpan-1][0]) / Math.abs(budget[simulationNum / comBehaveSpan-1][0])+1)/2);
+					System.out.print("\t"+((budget[simulationNum / comBehaveSpan-1][1]) / Math.abs(budget[simulationNum / comBehaveSpan-1][1])+1)/2);
+					System.out.print("\t"+((budget[simulationNum / comBehaveSpan-1][2]) / Math.abs(budget[simulationNum / comBehaveSpan-1][2])+1)/2);
+					System.out.println("");
 				}
 
 				// System.out.println(a);
@@ -505,24 +520,24 @@ public class main {
 				// + profit[i][1] / italationNum);
 				// }
 
-				// if (comNum == 3) {
-				// for (int i = 0; i < simulationNum / comBehaveSpan; i++) {
-				// System.out.println(profit[i][0] / italationNum + "\t"
-				// + profit[i][1] / italationNum + "\t"
-				// + profit[i][2] / italationNum + "\t" + sales[i][0]
-				// + "\t" + sales[i][1] + "\t" + sales[i][2] + "\t"
-				// + cost[i][0] + "\t" + cost[i][1] + "\t" + cost[i][2]
-				// + "\t" + budget[i][0] + "\t" + budget[i][1] + "\t"
-				// + budget[i][2]);
-				// }
-				// System.out.println(a1 + "\t" + a2 + "\t" + a3 + "\t" + a4);
-				// System.out.println(b1 + "\t" + b2 + "\t" + b3 + "\t" + b4);
-				// System.out.println(c1 + "\t" + c2 + "\t" + c3 + "\t" + c4);
-				//
-				// }
-				//
-				// if (comNum == 2) {
-				//
+//				 if (comNum == 3) {
+//				 for (int i = 0; i < simulationNum / comBehaveSpan; i++) {
+//				 System.out.println(profit[i][0] / italationNum + "\t"
+//				 + profit[i][1] / italationNum + "\t"
+//				 + profit[i][2] / italationNum + "\t" + sales[i][0]
+//				 + "\t" + sales[i][1] + "\t" + sales[i][2] + "\t"
+//				 + cost[i][0] + "\t" + cost[i][1] + "\t" + cost[i][2]
+//				 + "\t" + budget[i][0] + "\t" + budget[i][1] + "\t"
+//				 + budget[i][2]);
+//				 }
+////				 System.out.println(a1 + "\t" + a2 + "\t" + a3 + "\t" + a4);
+////				 System.out.println(b1 + "\t" + b2 + "\t" + b3 + "\t" + b4);
+////				 System.out.println(c1 + "\t" + c2 + "\t" + c3 + "\t" + c4);
+//				
+//				 }
+//				
+//				 if (comNum == 2) {
+//				
 //				 for (int i = 0; i < simulationNum / comBehaveSpan; i++) {
 //				 System.out.println(profit[i][0] / italationNum + "\t"
 //				 + profit[i][1] / italationNum + "\t" + sales[i][0]
@@ -530,7 +545,7 @@ public class main {
 //				 + cost[i][1] + "\t" + budget[i][0] + "\t"
 //				 + budget[i][1] + "\t" + salesFreq[i][0] + "\t"
 //				 + salesFreq[i][1] + "\t" + sumPreference[i]);
-//				 }
+//				 }}
 				//
 				// for (int i = 0; i < responsiveStrategyList.length; i++) {
 				// for (int j = 0; j < responsiveStrategyList[i].length; j++) {
@@ -568,38 +583,38 @@ public class main {
 				// output
 
 				// 結果の出力
-				System.out.print(roop1 * paraSet.length + roop2 + "\t" + "/" + "\t" + paraSet.length * paraSet.length);
-				for (int i = 0; i < 4; i++) {
-					output[roop1 * paraSet.length + roop2][i] = paraSet[roop1][i];
-					System.out.print("\t" + paraSet[roop1][i]);
-				}
-				for (int j = 0; j < 4; j++) {
-					output[roop1 * paraSet.length + roop2][4 + j] = paraSet[roop2][j];
-					System.out.print("\t" + paraSet[roop2][j]);
-				}
-				for (int j = 0; j < CASE.length; j++) {
-					output[roop1 * paraSet.length + roop2][8 + j] = CASE[j];
-					System.out.print("\t" + CASE[j]);
-				}
-				// 撤退店舗の出力
-					output[roop1 * paraSet.length + roop2][8 + 7]=deadCount[0];
-					output[roop1 * paraSet.length + roop2][8 + 8]=deadCount[1];
-				System.out.print("\t" + deadCount[0]+"\t" + deadCount[1]);
-				System.out.print("\t" + corp);
-				System.out.println();
-
-				// 1試行の時のみ出力
-				if (paraSet.length == 1 && italationNum == 1) {
-					outputCSV.outputInt("customerBuyStoreHist", customerBuyStoreHist);
-					outputCSV.outputInt("action", action);
-
-					for (int k = 0; k < comNum; k++) {
-						outputCSV.outputInt("customerHavePoint" + k, customerHavePoint[k]);
-						outputCSV.outputDouble("actionEvaluateHist" + k, actionEvaluateHist[k]);
-
-					}
-
-				}
+//				System.out.print(roop1 * paraSet.length + roop2 + "\t" + "/" + "\t" + paraSet.length * paraSet.length);
+//				for (int i = 0; i < 4; i++) {
+//					output[roop1 * paraSet.length + roop2][i] = paraSet[roop1][i];
+//					System.out.print("\t" + paraSet[roop1][i]);
+//				}
+//				for (int j = 0; j < 4; j++) {
+//					output[roop1 * paraSet.length + roop2][4 + j] = paraSet[roop2][j];
+//					System.out.print("\t" + paraSet[roop2][j]);
+//				}
+//				for (int j = 0; j < CASE.length; j++) {
+//					output[roop1 * paraSet.length + roop2][8 + j] = CASE[j];
+//					System.out.print("\t" + CASE[j]);
+//				}
+//				// 撤退店舗の出力
+//					output[roop1 * paraSet.length + roop2][8 + 7]=deadCount[0];
+//					output[roop1 * paraSet.length + roop2][8 + 8]=deadCount[1];
+//				System.out.print("\t" + deadCount[0]+"\t" + deadCount[1]);
+//				System.out.print("\t" + corp);
+//				System.out.println();
+//
+//				// 1試行の時のみ出力
+//				if (paraSet.length == 1 && italationNum == 1) {
+//					outputCSV.outputInt("customerBuyStoreHist", customerBuyStoreHist);
+//					outputCSV.outputInt("action", action);
+//
+//					for (int k = 0; k < comNum; k++) {
+//						outputCSV.outputInt("customerHavePoint" + k, customerHavePoint[k]);
+//						outputCSV.outputDouble("actionEvaluateHist" + k, actionEvaluateHist[k]);
+//
+//					}
+//
+//				}
 			}
 		}
 
